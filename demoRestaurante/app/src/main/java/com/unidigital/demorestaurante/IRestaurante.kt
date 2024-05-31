@@ -4,5 +4,4 @@ interface IRestaurante {
 
     fun iniciarTomadeOrden()
 
-
 }

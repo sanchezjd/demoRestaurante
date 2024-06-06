@@ -9,21 +9,23 @@ class ElCorral(var enlace:IEnlace) : IRestaurante {
     var TAG = "ElCorral"
     private fun prepararCombo1() {
         Log.i(TAG,"Enlace combo 1")
-
-
         GlobalScope.async {
-            Thread.sleep(2000)
+            enlace.preparandoSuOrden()
+            Thread.sleep(3000)
             enlace.suOrdenEstaLista()
         }
 
-        enlace.preparandoSuOrden()
     }
 
     private fun prepararCombo2() {
-        Log.i(TAG,"Enlace combo 2")
-
-        enlace.suOrdenEstaLista()
+        Log.i(TAG, "Enlace combo 2")
+        GlobalScope.async {
+            enlace.preparandoSuOrden()
+            Thread.sleep(1000)
+            enlace.suOrdenEstaLista()
+        }
     }
+
 
     override fun iniciarTomadeOrden()  {
         var hora =  Random.nextInt(1, 24)
@@ -33,17 +35,14 @@ class ElCorral(var enlace:IEnlace) : IRestaurante {
             enlace.estoyCerrado()
         }
         else {
-            enlace.presentarMenu(arrayListOf("Combo 1", "Combo 2"),
-                {indiceCodigo ->
-                    if(indiceCodigo == 0){
-                        prepararCombo1()
-                    }
-                    else if(indiceCodigo == 1){
-                        prepararCombo2()
-                    }
+            enlace.presentarMenu(arrayListOf("Combo 1", "Combo 2"))
+            { indiceCodigo ->
+                if (indiceCodigo == 0) {
+                    prepararCombo1()
+                } else if (indiceCodigo == 1) {
+                    prepararCombo2()
                 }
-            )
+            }
         }
     }
-
 }

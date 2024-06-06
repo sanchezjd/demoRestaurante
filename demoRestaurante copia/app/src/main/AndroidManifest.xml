@@ -13,12 +13,7 @@
             android:theme="@style/Theme.DemoRestaurante"
             tools:targetApi="31">
         <activity
-                android:name=".views.Pago.viewActivitys.PagoActivity"
-                android:exported="false"
-                android:label="@string/title_activity_pago"
-                android:theme="@style/Theme.DemoRestaurante"/>
-        <activity
-                android:name=".views.Main.viewActivitys.MainActivity"
+                android:name=".MainActivity"
                 android:exported="true"
                 android:label="@string/app_name"
                 android:theme="@style/Theme.DemoRestaurante">

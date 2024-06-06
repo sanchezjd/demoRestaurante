@@ -10,9 +10,11 @@ import androidx.lifecycle.ViewModel
 class Comensal : IEnlace, ViewModel() {
     var TAG = "Comensal"
     lateinit var restaurante:IRestaurante
+
     var listMenu  =  mutableStateListOf<Pair<Int,String>>()
     var mensajesDelRestaurante by mutableStateOf("Elija su Restaurante")
     var showDialogMenu by mutableStateOf(false)
+    var showDialogOrdenLista by mutableStateOf(false)
 
 
 
@@ -35,9 +37,20 @@ class Comensal : IEnlace, ViewModel() {
 
     }
 
+    override fun preparandoSuOrden() {
+        Log.i(TAG, "Preparando su Orden")
+        mensajesDelRestaurante = "Preparando su Orden"
+
+    }
+
+    fun cambiarEstadoVoyAComer() {
+        mensajesDelRestaurante = "Voy a comer"
+    }
+
     override fun suOrdenEstaLista() {
         Log.i(TAG, "Voy a comer")
-        mensajesDelRestaurante = "Voy a comer"
+
+        showDialogOrdenLista = true
     }
 
     override fun hayProblemasConsuOrden(problema: String) {

@@ -22,14 +22,16 @@ class Comensal : IEnlace, ViewModel() {
     var observaciones by mutableStateOf("")
     var indexMenu by mutableStateOf(0xFF)
     var showDialogWait by mutableStateOf(false)
+    var montoOrden:Long by mutableStateOf(0)
+    var paraLlevar by mutableStateOf(false)
 
     override fun estoyCerrado() {
         Log.i(TAG, "Restaurante Cerrado")
         mensajesDelRestaurante = "Restaurante Cerrado"
     }
 
-    var onClicMenu : (Int,String) -> Unit by mutableStateOf({ a,b -> })
-    override fun presentarMenu(listaCombos: ArrayList<String>, onClienteElija: (Int, String) -> Unit) {
+    var onClicMenu : (Int,String,Boolean) -> Unit by mutableStateOf({ a,b,c -> })
+    override fun presentarMenu(listaCombos: ArrayList<String>, onClienteElija: (Int, String, Boolean) -> Unit) {
         onClicMenu = onClienteElija
         listMenu.clear()
         var i = 0
@@ -42,8 +44,9 @@ class Comensal : IEnlace, ViewModel() {
 
     }
 
-    override fun suOrdenEstaLista(mensaje: String) {
+    override fun suOrdenEstaLista(mensaje: String, monto: Long) {
         Log.i(TAG, "Voy a comer")
+        montoOrden = monto
         mensajesDelRestaurante = mensaje
         showDialogOrdenLista = true
         showDialogWait = false

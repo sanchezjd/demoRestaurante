@@ -1,5 +1,6 @@
 package com.unidigital.demorestaurante.views.Main.viewActivitys
 
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
@@ -10,26 +11,34 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.unidigital.demorestaurante.DialogWait
-import com.unidigital.demorestaurante.customBoton
+import com.unidigital.demorestaurante.*
+import com.unidigital.demorestaurante.R
 import com.unidigital.demorestaurante.views.Main.viewModels.Comensal
 import com.unidigital.demorestaurante.views.Pago.viewActivitys.PagoActivity
 import com.unidigital.demorestaurante.ui.theme.DemoRestauranteTheme
 
+@ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
     private val comensal: Comensal by viewModels()
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -38,7 +47,18 @@ class MainActivity : ComponentActivity() {
             DemoRestauranteTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    MainView(comensal)
+                    Scaffold(
+                        topBar = {
+                           miTopBar()
+                        },
+                        bottomBar = {
+                           miBarraBaja()
+                        }
+                    )
+                    {
+                        MainView(comensal)
+                    }
+
                 }
             }
         }
@@ -71,34 +91,7 @@ fun MainView(comensal: Comensal) {
     }
 
     if(comensal.showDialogObservaciones) {
-        Dialog(onDismissRequest = { /*TODO*/ }) {
-            Surface(
-                modifier = Modifier,
-                shape = MaterialTheme.shapes.small
-            ) {
-                Column(horizontalAlignment = CenterHorizontally) {
-                    Text(text = "OBSERVACIONES")
-
-                    OutlinedTextField(
-                        value = comensal.observaciones,
-                        onValueChange = {
-                            if (it.length <= 20)
-                                comensal.observaciones = it
-                        },
-                        label = { Text("Observaciones") },
-
-                        )
-
-                    customBoton(
-                        etiqueta = "Aceptar",
-                        onClickIn = {
-                            comensal.showDialogObservaciones = false
-                            comensal.onClicMenu(comensal.indexMenu, comensal.observaciones)
-
-                        })
-                }
-            }
-        }
+       viewObservaciones(comensal)
     }
 
     if(comensal.showDialogMenu) {
@@ -152,7 +145,7 @@ fun MainView(comensal: Comensal) {
                     Button(onClick = {
                         comensal.showDialogOrdenLista = false
                         val intent = Intent(context, PagoActivity::class.java)
-                        intent.putExtra("MONTO", "1000")
+                        intent.putExtra("MONTO", comensal.montoOrden)
                         medioPagoLauncher.launch(intent)
 
                         //comensal.mensajesDelRestaurante = "Voy comer"
@@ -189,7 +182,53 @@ fun MainView(comensal: Comensal) {
 
         }
 
-        Text(text = comensal.mensajesDelRestaurante)
+        Text(text = comensal.mensajesDelRestaurante, fontSize = if(comensal.paraLlevar) 24.sp else 16.sp)
+
+        if(comensal.paraLlevar)
+            Text(text = "PARA LLEVAR")
+    }
+}
+
+@Composable
+fun viewObservaciones(comensal: Comensal) {
+    Dialog(onDismissRequest = { /*TODO*/ }) {
+        Surface(
+            modifier = Modifier,
+            shape = MaterialTheme.shapes.small
+        ) {
+            Column(horizontalAlignment = CenterHorizontally) {
+                Text(text = "OBSERVACIONES")
+
+                OutlinedTextField(
+                    value = comensal.observaciones,
+                    onValueChange = {
+                        if (it.length <= 20)
+                            comensal.observaciones = it
+                    },
+                    label = { Text("Observaciones") },
+
+                    )
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "Para llevar")
+                    Switch(
+                        modifier = Modifier.weight(0.17F),
+                        checked = comensal.paraLlevar,
+                        onCheckedChange = {
+                            comensal.paraLlevar = it
+                        }
+                    )
+                }
+
+                customBoton(
+                    etiqueta = "Aceptar",
+                    onClickIn = {
+                        comensal.showDialogObservaciones = false
+                        comensal.onClicMenu(comensal.indexMenu, comensal.observaciones, comensal.paraLlevar)
+
+                    })
+            }
+        }
     }
 }
 

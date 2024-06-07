@@ -5,6 +5,7 @@ import kotlin.random.Random
 
 class PapaJhons(var enlace:IEnlace) : IRestaurante {
     var TAG = "PapaJhons"
+    var extras = ""
 
     private fun preparePizzas(tipoPizza:Int) {
         if(tipoPizza==1){
@@ -21,8 +22,9 @@ class PapaJhons(var enlace:IEnlace) : IRestaurante {
 
 
         if(hora > 10 &&  hora < 22) {
-            enlace.presentarMenu(arrayListOf("Pizza 1", "Pizza 2", "Pizza 3", "Pizza 4"),
-                {indiceCodigo ->
+            enlace.presentarMenu(arrayListOf("Pizza 1", "Pizza 2", "Pizza 3", "Pizza 4","Pizza 1", "Pizza 2", "Pizza 3", "Pizza 4","Pizza 1", "Pizza 2", "Pizza 3", "Pizza 4","Pizza 1", "Pizza 2", "Pizza 3", "Pizza 4","Pizza 1", "Pizza 2", "Pizza 3", "Pizza 4"),
+                {indiceCodigo, extrasIn ->
+                    extras = extrasIn
                     preparePizzas(indiceCodigo)
                 }
             )

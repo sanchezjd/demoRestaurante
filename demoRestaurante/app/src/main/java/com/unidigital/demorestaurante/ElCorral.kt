@@ -7,13 +7,14 @@ import kotlin.random.Random
 
 class ElCorral(var enlace:IEnlace) : IRestaurante {
     var TAG = "ElCorral"
+    var observaciones = ""
     private fun prepararCombo1() {
         Log.i(TAG,"Enlace combo 1")
 
 
         GlobalScope.async {
             Thread.sleep(2000)
-            enlace.suOrdenEstaLista()
+            enlace.suOrdenEstaLista("Combo 1 Observacion: $observaciones")
         }
 
         enlace.preparandoSuOrden()
@@ -22,7 +23,7 @@ class ElCorral(var enlace:IEnlace) : IRestaurante {
     private fun prepararCombo2() {
         Log.i(TAG,"Enlace combo 2")
 
-        enlace.suOrdenEstaLista()
+        enlace.suOrdenEstaLista("Combo 2 Observacion: $observaciones")
     }
 
     override fun iniciarTomadeOrden()  {
@@ -34,7 +35,8 @@ class ElCorral(var enlace:IEnlace) : IRestaurante {
         }
         else {
             enlace.presentarMenu(arrayListOf("Combo 1", "Combo 2"),
-                {indiceCodigo ->
+                {indiceCodigo, observacionesIn ->
+                    observaciones = observacionesIn
                     if(indiceCodigo == 0){
                         prepararCombo1()
                     }

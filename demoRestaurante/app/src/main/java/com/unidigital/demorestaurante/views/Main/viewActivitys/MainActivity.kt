@@ -11,16 +11,18 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.unidigital.demorestaurante.DialogWait
+import com.unidigital.demorestaurante.customBoton
 import com.unidigital.demorestaurante.views.Main.viewModels.Comensal
 import com.unidigital.demorestaurante.views.Pago.viewActivitys.PagoActivity
 import com.unidigital.demorestaurante.ui.theme.DemoRestauranteTheme
@@ -64,26 +66,79 @@ fun MainView(comensal: Comensal) {
         }
     }
 
-    if(comensal.showDialogMenu) {
+    if(comensal.showDialogWait) {
+        DialogWait(textoMensaje = "Preparando Comida")
+    }
+
+    if(comensal.showDialogObservaciones) {
         Dialog(onDismissRequest = { /*TODO*/ }) {
-            Surface( modifier = Modifier,
-                shape = MaterialTheme.shapes.small) {
+            Surface(
+                modifier = Modifier,
+                shape = MaterialTheme.shapes.small
+            ) {
                 Column(horizontalAlignment = CenterHorizontally) {
-                    Text(text = "MENU")
+                    Text(text = "OBSERVACIONES")
 
-                    for(itemMenu in comensal.listMenu) {
-                        Button(onClick = {
-                            comensal.onClicMenu (itemMenu.first)
-                            comensal.showDialogMenu = false
-                        }) {
-                            Text(text = itemMenu.second)
-                        }
+                    OutlinedTextField(
+                        value = comensal.observaciones,
+                        onValueChange = {
+                            if (it.length <= 20)
+                                comensal.observaciones = it
+                        },
+                        label = { Text("Observaciones") },
 
-                    }
+                        )
+
+                    customBoton(
+                        etiqueta = "Aceptar",
+                        onClickIn = {
+                            comensal.showDialogObservaciones = false
+                            comensal.onClicMenu(comensal.indexMenu, comensal.observaciones)
+
+                        })
                 }
             }
         }
     }
+
+    if(comensal.showDialogMenu) {
+            Dialog(onDismissRequest = { /*TODO*/ }) {
+                Surface(
+                    modifier = Modifier,
+                    shape = MaterialTheme.shapes.small
+                ) {
+                    Column(horizontalAlignment = CenterHorizontally) {
+                        Text(text = "MENU")
+
+
+                        LazyColumn(modifier = Modifier
+                            .padding(10.dp)
+                            .height(150.dp)) {
+                            items(comensal.listMenu) { menuItem ->
+                                customBoton(
+                                    etiqueta = menuItem.second,
+                                    onClickIn = {
+                                        comensal.showDialogObservaciones = true
+                                        comensal.indexMenu = menuItem.first
+                                        comensal.showDialogMenu = false
+                                    })
+                                Spacer(modifier = Modifier.size(5.dp))
+                            }
+                        }
+
+                        /* for(itemMenu in comensal.listMenu) {
+                        customBoton(
+                            etiqueta = itemMenu.second,
+                            onClickIn = {
+                            comensal.onClicMenu (itemMenu.first)
+                            comensal.showDialogMenu = false
+                        })
+                        Spacer(modifier = Modifier.size(5.dp))
+                    }*/
+                    }
+                }
+            }
+        }
 
     if(comensal.showDialogOrdenLista) {
         Dialog(onDismissRequest = { /*TODO*/ }) {
@@ -119,17 +174,19 @@ fun MainView(comensal: Comensal) {
         Text(text = "DEMO")
         Spacer(modifier = Modifier.height(30.dp))
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Button(modifier = Modifier
-                .height(60.dp)
-                .width(180.dp), onClick = { comensal.llegarARestaurante(1) }) {
-                Text(text = "Ordenar El Corral")
-            }
+            customBoton(
+                etiqueta = "Ordenar El Corral",
+                onClickIn = { comensal.llegarARestaurante(1) }
+            )
+
+
             Spacer(modifier = Modifier.size(10.dp))
-            Button(modifier = Modifier
-                .height(60.dp)
-                .width(180.dp), onClick = { comensal.llegarARestaurante(2) }) {
-                Text(text = "Ordenar Papa Jhons")
-            }
+
+            customBoton(
+                etiqueta = "Ordenar Papa Jhons",
+                onClickIn = { comensal.llegarARestaurante(2)}
+            )
+
         }
 
         Text(text = comensal.mensajesDelRestaurante)
